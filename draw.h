@@ -4,7 +4,9 @@
 #include <regex>
 #include <string>
 #include <vector>
-#include <vector>
+#include <time.h>
+#include <windows.h>
+
 using namespace std;
 
 vector<string> drawX(vector<int> posx, int siz, vector<string> asn){    
@@ -25,11 +27,10 @@ vector<string> drawX(vector<int> posx, int siz, vector<string> asn){
 
         }
         if (i == 0){
-            vc.push_back("#");
-
+            vc.push_back("");
         }else if (i == siz-1){
 
-            vc.push_back("#");
+            vc.push_back("");
             break;
 
         }
@@ -50,7 +51,8 @@ void runDraw(vector<int> posx, vector<int> posy, int siz, vector<string> asn,int
     }
 
     int xya = 1;
-    while (xya < ya){
+    while (xya < ya + 1)
+    {
         vector<int> f1;
         vector<string> f2;
 
@@ -72,7 +74,7 @@ void runDraw(vector<int> posx, vector<int> posy, int siz, vector<string> asn,int
 
     for (int i = 0;i<drewy1.size();i++){
 
-    cout << drewy1[i];
+        cout << drewy1[i];
     
     }
     cout << "\n";
@@ -85,3 +87,161 @@ void runDraw(vector<int> posx, vector<int> posy, int siz, vector<string> asn,int
 
 }
 
+void clearScreen()
+{
+    HANDLE hOut;
+    COORD Position;
+
+    hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    Position.X = 0;
+    Position.Y = 0;
+    SetConsoleCursorPosition(hOut, Position);
+}
+
+vector<int> GetXYDmap(string f, int t, int debug)
+{
+    //SAUSAGE
+    ifstream myl;
+    vector<string> vesc;
+    myl.open(f);
+    string memn, nen;
+    myl.seekg(0, ios::beg);
+    int ypos = 0;
+
+    vector<int> xxpos;
+    vector<int> yypos;
+    vector<string> CC;
+
+    while (!myl.eof())
+    {
+
+        std::getline(myl, memn);
+        for (int s = 0; s < memn.size(); s++)
+        {
+            if (memn[s] != ' ')
+            {
+                xxpos.push_back(s);
+                yypos.push_back(ypos);
+                string xf(1, memn[s]);
+                CC.push_back(xf);
+            }
+        }
+
+        vesc.push_back(memn);
+        ypos += 1;
+    }
+    if (debug == 1)
+    {
+        cout << '{';
+
+        for (int o = 0; o < CC.size(); o++)
+        {
+            cout << '"' << CC[o] << '"' << ',';
+            //cout << CC[o] << " "<< yypos[o] << " " << xxpos[o] << "\n";
+        }
+        cout << '}' << ";\n";
+        // ################################################################################## DEVIDER
+        cout << '{';
+
+        for (int o = 0; o < CC.size(); o++)
+        {
+            cout << yypos[o] << ',';
+            //cout << CC[o] << " "<< yypos[o] << " " << xxpos[o] << "\n";
+        }
+        cout << '}' << ";\n";
+
+        // ################################################################################## DEVIDER
+        cout << '{';
+
+        for (int o = 0; o < CC.size(); o++)
+        {
+            cout << xxpos[o] << ',';
+            //cout << CC[o] << " "<< yypos[o] << " " << xxpos[o] << "\n";
+        }
+        cout << '}' << ";\n";
+
+        while (1)
+        {
+            if (kbhit())
+                break;
+        }
+    }
+
+    if (t == 0)
+    {
+        return xxpos;
+    }
+    else
+    {
+        return yypos;
+    }
+}
+vector<string> GetCDmap(string f)
+{
+
+    ifstream myl;
+    vector<string> vesc;
+    myl.open(f);
+    string memn, nen;
+    myl.seekg(0, ios::beg);
+    int ypos = 0;
+
+    vector<int> xxpos;
+    vector<int> yypos;
+    vector<string> CC;
+
+    while (!myl.eof())
+    {
+
+        std::getline(myl, memn);
+        for (int s = 0; s < memn.size(); s++)
+        {
+            if (memn[s] != ' ')
+            {
+                xxpos.push_back(s);
+                yypos.push_back(ypos);
+                string xf(1, memn[s]);
+                CC.push_back(xf);
+            }
+        }
+
+        vesc.push_back(memn);
+        ypos += 1;
+    }
+
+    return CC;
+}
+
+int CollisionMulti(vector<string> f, vector<int> rx, vector<int> ry, string p1, string p2)
+{
+
+    int p1x;
+    int p1y;
+
+    for (int x = 0; x < f.size(); x++)
+    {
+        if (f[x] == p1)
+        {
+
+            p1x = rx[x];
+            p1y = ry[x];
+            break;
+        }
+    }
+    for (int x = 0; x < f.size(); x++)
+    {
+        if (f[x] == p2)
+        {
+            if (rx[x] == p1x)
+            {
+                if (ry[x] == p1y)
+                {
+
+                    return 1;
+                }
+            }
+        }
+    }
+    return 0;
+}
