@@ -307,8 +307,8 @@ void loadSprite(vector<string> &f, vector<int>& x, vector<int> &y,string sn,int 
     std::getline(myl,memn);
     for (int s = 0; s<memn.size();s++){
         if (memn[s] != ' '){
-        SOR.push_back(1);
-        //cout<< SOR[s] << " ";
+            SOR.push_back(id);
+            //cout<< SOR[s] << " ";
 
 
             xxpos.push_back(s + xs);
